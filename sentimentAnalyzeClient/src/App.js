@@ -3,6 +3,17 @@ import './App.css';
 import EmotionTable from './EmotionTable.js';
 import React from 'react';
 
+const Emoji = props => (
+    <span
+        className="emoji"
+        role="img"
+        aria-label={props.label ? props.label : ""}
+        aria-hidden={props.label ? "false" : "true"}
+    >
+        {props.symbol}
+    </span>
+);
+
 class App extends React.Component {
   /*
   We are setting the component as a state named innercomp.
@@ -37,23 +48,32 @@ class App extends React.Component {
       });
   } 
   
-  sendForSentimentAnalysis = () => {
+    sendForSentimentAnalysis = () => {
     this.setState({sentiment:true});
     let url = ".";
     let mode = this.state.mode
     url = url+"/" + mode + "/sentiment?"+ mode + "="+document.getElementById("textinput").value;
-
     fetch(url).then((response)=>{
         response.json().then((data)=>{
         this.setState({sentimentOutput:data.label});
         let output = data.label;
-        let color = "white"
+        let color = "yellow"
+        let symbol = "😐"
+
         switch(output) {
-          case "positive": color = "black";break;
-          case "negative": color = "black";break;
-          default: color = "black";
+          case "positive": 
+            color = "green"
+            symbol = "🙂"
+            break;
+          case "negative": 
+            color = "red";
+            symbol = "☹️"
+            break;
+          default: 
+            color = "yellow";
+            symbol = "😐"
         }
-        output = <div style={{color:color,fontSize:20}}>{output}</div>
+        output = <div style={{color:color,fontSize:20}}>{output}<Emoji symbol={symbol} label={output}/></div>
         this.setState({sentimentOutput:output});
       })});
   }
@@ -73,18 +93,21 @@ class App extends React.Component {
   
 
   render() {
-    return (  
-      <div className="App">
-      <button className="btn btn-info" onClick={()=>{this.renderOutput('text')}}>Text</button>
-        <button className="btn btn-dark"  onClick={()=>{this.renderOutput('url')}}>URL</button>
-        <br/><br/>
-        {this.state.innercomp}
-        <br/>
-        <button className="btn-primary" onClick={this.sendForSentimentAnalysis}>Analyze Sentiment</button>
-        <button className="btn-primary" onClick={this.sendForEmotionAnalysis}>Analyze Emotion</button>
-        <br/>
+    return (
+      <>
+        <div className="App-header">Sentiment Analyzer</div>
+        <div className="App">
+            <button className="btn btn-info" onClick={() => { this.renderOutput('text') }}>Text</button>
+            <button className="btn btn-dark" onClick={() => { this.renderOutput('url') }}>URL</button>
+            <br /><br />
+            {this.state.innercomp}
+            <br />
+            <button className="btn-primary" onClick={this.sendForSentimentAnalysis}>Analyze Sentiment</button>
+            <button className="btn-primary" onClick={this.sendForEmotionAnalysis}>Analyze Emotion</button>
+            <br />
             {this.state.sentimentOutput}
-      </div>
+        </div>
+      </>
     );
     }
 }
