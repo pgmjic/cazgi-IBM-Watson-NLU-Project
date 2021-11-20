@@ -113,8 +113,12 @@ app.get("/text/emotion", (req,res) => {
     naturalLanguageUnderstanding.analyze(analyzeParams)
     .then(analysisResults => {
         //Retrieve the emotion and return it as a formatted string
-
-        return res.send(analysisResults.result.keywords[0].emotion,null,2);
+        if (analysisResults.result.keywords.length > 0 &&
+            analysisResults.result.keywords[0].hasOwnProperty("emotion"))
+            return res.send(analysisResults.result.keywords[0].emotion,null,2);
+        else {
+            return res.send({status: 400, statusText: "Result missing emotion"});
+        }
     })
     .catch(err => {
         return res.status(err.status).send("Could not do desired operation "+err);
@@ -140,7 +144,12 @@ app.get("/text/sentiment", (req,res) => {
     naturalLanguageUnderstanding.analyze(analyzeParams)
     .then(analysisResults => {
         //Retrieve the sentiment and return it as a formatted string
-        return res.send(analysisResults.result.keywords[0].sentiment,null,2);
+        if (analysisResults.result.keywords.length > 0 &&
+            analysisResults.result.keywords[0].hasOwnProperty("sentiment"))
+            return res.send(analysisResults.result.keywords[0].sentiment,null,2);
+        else {
+            return res.send({status: 400, statusText: "Result missing sentiment"});
+        }
     })
     .catch(err => {
         return res.status(err.status).send("Could not do desired operation "+err);
