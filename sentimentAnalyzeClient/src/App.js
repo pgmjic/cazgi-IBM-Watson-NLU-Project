@@ -91,12 +91,12 @@ class App extends React.Component {
             }
             else {
               if (data.hasOwnProperty('status'))
-                this.setState({errorMsg:`${data.status}: ${data.statusText}`});
+                this.setState({errorMsg:`${data.status}: ${data.statusText}`, sentimentOutput: []});
             }
           })
         }
         else if (response.status >= 400) {
-          this.setState({errorMsg:`${response.status}: ${response.statusText}`});
+          this.setState({errorMsg:`${response.status}: ${response.statusText}`, sentimentOutput: []});
         }
       });
     }
